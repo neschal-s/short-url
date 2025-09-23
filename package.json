@@ -1,0 +1,27 @@
+{
+  "name": "short-url",
+  "version": "1.0.0",
+  "description": "��#\u0000 \u0000s\u0000h\u0000o\u0000r\u0000t\u0000-\u0000u\u0000r\u0000l\u0000\r\u0000 \u0000",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/neschal-s/short-url.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/neschal-s/short-url/issues"
+  },
+  "homepage": "https://github.com/neschal-s/short-url#readme",
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.18.1",
+    "nanoid": "^5.1.5",
+    "nodemon": "^3.1.10",
+    "shortid": "^2.2.17"
+  }
+}

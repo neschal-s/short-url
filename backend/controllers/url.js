@@ -1,4 +1,4 @@
-import { nanoid } from "nanoid";
+
 import shortid from "shortid";
 import Url from "../models/url.js";
 export async function handleGeneratenewShortUrl(req, res) {
@@ -22,9 +22,9 @@ export async function handleGeneratenewShortUrl(req, res) {
   await Url.create({
     shortId: shortID,
     redirectURL: body.url,
-    visitedHistory: [],
+    visitHistory: [],
   });
-  res.json({ id: shortID });
+  res.json({ shortId: shortID });
 }
 
 export async function handleGetAnalytics(req,res){

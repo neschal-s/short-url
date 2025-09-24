@@ -5,38 +5,37 @@ export default function App() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [analytics, setAnalytics] = useState(null);
 
-  const handleSubmit=async (e)=>{
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try{
-      const res = await axios.post("http://localhost:3000/api/url", { url });
+    try {
+      const res = await axios.post("http://localhost:3000/url", { url });
       setShortUrl(`http://localhost:3000/${res.data.shortId}`);
       setUrl("");
-    }catch(err){
+      setCopied(false); // reset copied state for new URL
+    } catch (err) {
       console.error("Error shortening URL:", err);
     }
-  }
+  };
 
-  
-  const handleCopy=()=>{
+  const handleCopy = () => {
     navigator.clipboard.writeText(shortUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   return (
-    
     <div className="min-h-screen bg-gradient-to-b from-pink-100 to-gray-300 flex flex-col items-center justify-center p-6 text-center">
-
-      <h1 className="text-5xl font-light">
-        Tiny links, Mighty power!
-      </h1>
+      {/* Heading */}
+      <h1 className="text-5xl font-light">Tiny links, Mighty power!</h1>
 
       <p className="mt-2 text-lg font-light">
-        Shorten your URLs, track clicks, and <span className="text-red-500">get Analytics.</span>
+        Shorten your URLs, track clicks, and{" "}
+        <span className="text-red-500">get Analytics.</span>
       </p>
 
-
+      {/* Input box */}
       <div className="flex flex-col items-center mt-10 mb-20">
         <form
           onSubmit={handleSubmit}
@@ -45,27 +44,28 @@ export default function App() {
           <input
             type="url"
             value={url}
-            placeholder="Paste your long URL here....."
-            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none text-black"
             onChange={(e) => setUrl(e.target.value)}
-            required />
+            placeholder="Paste your long URL here..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-400 outline-none text-black"
+            required
+          />
           <button
             type="submit"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow">
+            className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg shadow"
+          >
             Shorten
           </button>
         </form>
-
       </div>
 
+      {/* Result box */}
       {shortUrl && (
-        <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md">
-          <p className="text-gray-700 font-medium">Your short link:</p>
+        <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md flex items-center gap-4">
           <a
             href={shortUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-blue-600 font-semibold hover:underline break-all"
+            className="text-blue-600 font-semibold hover:underline break-all flex-1 text-left"
           >
             {shortUrl}
           </a>
@@ -77,10 +77,6 @@ export default function App() {
           </button>
         </div>
       )}
-
-
-
     </div>
-
   );
 }

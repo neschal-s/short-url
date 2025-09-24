@@ -15,7 +15,7 @@ export async function handleGeneratenewShortUrl(req, res) {
   }
 
   if (id) {
-    return res.status(200).json({ id: id.shortId });
+    return res.status(200).json({ shortId: id.shortId });
   }
 
   const shortID = shortid();

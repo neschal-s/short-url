@@ -29,17 +29,21 @@ export default function App() {
   };
 
   const handleAnalytics = async (e) => {
-    e.preventDefault();
-    try {
-      const id = analyticsUrl.split("/").pop();
-      const res = await axios.get(`http://localhost:3000/url/analytics/${id}`);
-      setAnalytics(res.data);
-    }
-    catch (err) {
-      console.error("Error fetching analytics:", err);
-      setAnalytics(null);
-    }
-  };
+  e.preventDefault();
+  if (!analyticsUrl) return alert("Please enter a short URL!");
+  
+  try {
+    const id = analyticsUrl.split("/").pop();
+    if (!id) return alert("Invalid short URL");
+    
+    const res = await axios.get(`http://localhost:3000/url/analytics/${id}`);
+    setAnalytics(res.data);
+  } catch (err) {
+    console.error("Error fetching analytics:", err);
+    setAnalytics(null);
+    alert("Failed to fetch analytics. Make sure the short URL is correct.");
+  }
+};
 
 
   return (
@@ -98,8 +102,8 @@ export default function App() {
         </div>
       )}
 
-      <div className="flex flex-col items-center mt-10 mb-10 w-full max-w-xl">
-        <h2 className="text-2xl mb-3">Get Analytics</h2>
+      <div className="flex flex-col items-center mt-10 mb-10 w-full max-w-md">
+        <h2 className="text-3xl font-extralight mb-3">Get <span className="text-blue-600">Analytics</span></h2>
         <div className="flex gap-3 w-full">
           <input
             type="url"
@@ -112,13 +116,13 @@ export default function App() {
             onClick={handleAnalytics}
             className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow"
           >
-            Get Analytics
+            Analyse
           </button>
         </div>
 
         {analytics && (
           <div className="mt-6 bg-white p-2 rounded-xl shadow-md w-full text-left">
-            <h3 className="text-xl font-semibold mb-2">Analytics:</h3>
+            <h3 className="text-xl font-semibold mb-2 text-red-500 text-center">Analytics:</h3>
             <p><strong>Total Clicks:</strong> {analytics.totalClicks}</p>
             <p className="mt-2"><strong>Visit History:</strong></p>
             <ul className="list-disc ml-5 max-h-48 overflow-y-auto">

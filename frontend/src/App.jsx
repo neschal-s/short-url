@@ -5,13 +5,15 @@ export default function App() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
   const [copied, setCopied] = useState(false);
+  const [analyticsUrl, setAnalyticsUrl] = useState(""); // input for analytics
   const [analytics, setAnalytics] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post("http://localhost:3000/url", { url });
-      setShortUrl(`http://localhost:3000/${res.data.shortId}`);
+      const id = res.data.shortId; // get shortId from response
+      setShortUrl(`http://localhost:3000/${id}`);
       setUrl("");
       setCopied(false); // reset copied state for new URL
     } catch (err) {
@@ -19,20 +21,35 @@ export default function App() {
     }
   };
 
+
   const handleCopy = () => {
     navigator.clipboard.writeText(shortUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
+  const handleAnalytics = async (e) => {
+    e.preventDefault();
+    try {
+      const id = analyticsUrl.split("/").pop();
+      const res = await axios.get(`http://localhost:3000/url/analytics/${id}`);
+      setAnalytics(res.data);
+    }
+    catch (err) {
+      console.error("Error fetching analytics:", err);
+      setAnalytics(null);
+    }
+  };
+
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-pink-100 to-gray-300 flex flex-col items-center justify-center p-6 text-center">
+    <div className="min-h-screen bg-gradient-to-b from-red-50 to-red-200 flex flex-col items-center justify-center p-6 text-center">
       {/* Heading */}
-      <h1 className="text-5xl font-light">Tiny links, Mighty power!</h1>
+      <h1 className="text-5xl font-light">Tiny links, <span className="text-blue-600">Mighty</span> power!</h1>
 
       <p className="mt-2 text-lg font-light">
         Shorten your URLs, track clicks, and{" "}
-        <span className="text-red-500">get Analytics.</span>
+        <span className="text-blue-600">get Analytics.</span>
       </p>
 
       {/* Input box */}
@@ -58,25 +75,61 @@ export default function App() {
         </form>
       </div>
 
-      {/* Result box */}
+
       {shortUrl && (
-        <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md flex items-center gap-4">
-          <a
-            href={shortUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-blue-600 font-semibold hover:underline break-all flex-1 text-left"
-          >
-            {shortUrl}
-          </a>
-          <button
-            onClick={handleCopy}
-            className="bg-gray-800 hover:bg-gray-900 text-white px-3 py-1 rounded-md text-sm"
-          >
-            {copied ? "Copied!" : "Copy"}
-          </button>
+        <div>
+          <h2 className="text-2xl mb-3">Your <span className="text-blue-600">Shortened</span> URL:</h2>
+          <div className="mt-6 bg-gray-100 p-4 rounded-lg shadow-md flex items-center gap-4">
+            <a
+              href={shortUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-red-600 font-semibold hover:underline break-all flex-1 text-left"
+            >
+              {shortUrl}
+            </a>
+            <button
+              onClick={handleCopy}
+              className="bg-gray-800 hover:bg-gray-900 text-white px-3 py-1 rounded-md text-sm"
+            >
+              {copied ? "Copied!" : "Copy"}
+            </button>
+          </div>
         </div>
       )}
+
+      <div className="flex flex-col items-center mt-10 mb-10 w-full max-w-xl">
+        <h2 className="text-2xl mb-3">Get Analytics</h2>
+        <div className="flex gap-3 w-full">
+          <input
+            type="url"
+            value={analyticsUrl}
+            onChange={(e) => setAnalyticsUrl(e.target.value)}
+            placeholder="Enter your short URL..."
+            className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-400 outline-none text-black"
+          />
+          <button
+            onClick={handleAnalytics}
+            className="bg-green-600 hover:bg-green-700 text-white px-6 py-2 rounded-lg shadow"
+          >
+            Get Analytics
+          </button>
+        </div>
+
+        {analytics && (
+          <div className="mt-6 bg-white p-2 rounded-xl shadow-md w-full text-left">
+            <h3 className="text-xl font-semibold mb-2">Analytics:</h3>
+            <p><strong>Total Clicks:</strong> {analytics.totalClicks}</p>
+            <p className="mt-2"><strong>Visit History:</strong></p>
+            <ul className="list-disc ml-5 max-h-48 overflow-y-auto">
+              {analytics.visitHistory.map((v, index) => (
+                <li key={index}>{new Date(v.timestamp).toLocaleString()}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }

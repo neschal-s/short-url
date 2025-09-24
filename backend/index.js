@@ -8,9 +8,15 @@ const PORT=3000;
 import cors from 'cors';
 
 
-connectToMongoDB('mongodb://localhost:27017/short-url')
+
+
+const MONGO_URL="mongodb+srv://admin:h1Gb0zWHrKUhsrjA@url-shortener-cluster.ixvmr1y.mongodb.net/short-url?retryWrites=true&w=majority&appName=url-shortener-cluster";
+
+
+connectToMongoDB(MONGO_URL)
 .then(()=>console.log("Connected to MongoDB"))
 .catch((err)=>console.log(err));
+
 
 
 app.use(cors());
@@ -18,18 +24,24 @@ app.use(express.json());
 
 app.use('/url',urlRoute);
 
-app.get('/:shortId',async (req,res)=>{
-    const shortId=req.params.shortId;
-    const entry=await URL.findOneAndUpdate({
-        shortId,
-    },{
-        $push:{visitHistory:{visitHistory:Date.now()},}
-    },
-    {new:true}
+app.get('/:shortId', async (req, res) => {
+  const { shortId } = req.params;
+  try {
+    const entry = await URL.findOneAndUpdate(
+      { shortId },
+      { $push: { visitHistory: { timestamp: new Date() } } },
+      { new: true }
     );
+
     if (!entry) return res.status(404).send("URL not found");
+
     res.redirect(entry.redirectURL);
-})
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server error");
+  }
+});
+
 
 
 

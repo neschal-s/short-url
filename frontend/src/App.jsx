@@ -11,14 +11,19 @@ export default function App() {
 
 
   const API_URL = import.meta.env.VITE_API_URL;
-  const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
+  // const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
+
+  const SHORT_URL_BASE = import.meta.env.VITE_SHORT_URL_BASE;
+
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const res = await axios.post(`${API_URL}/url`, { url });
       const id = res.data.shortId; // get shortId from response
-      setShortUrl(`${FRONTEND_URL}/${id}`);
+      setShortUrl(`${SHORT_URL_BASE}/${id}`);
       setUrl("");
       setCopied(false); // reset copied state for new URL
     } catch (err) {
@@ -34,21 +39,21 @@ export default function App() {
   };
 
   const handleAnalytics = async (e) => {
-  e.preventDefault();
-  if (!analyticsUrl) return alert("Please enter a short URL!");
-  
-  try {
-    const id = analyticsUrl.split("/").pop();
-    if (!id) return alert("Invalid short URL");
-    
-    const res = await axios.get(`${API_URL}/url/analytics/${id}`);
-    setAnalytics(res.data);
-  } catch (err) {
-    console.error("Error fetching analytics:", err);
-    setAnalytics(null);
-    alert("Failed to fetch analytics. Make sure the short URL is correct.");
-  }
-};
+    e.preventDefault();
+    if (!analyticsUrl) return alert("Please enter a short URL!");
+
+    try {
+      const id = analyticsUrl.split("/").pop();
+      if (!id) return alert("Invalid short URL");
+
+      const res = await axios.get(`${API_URL}/url/analytics/${id}`);
+      setAnalytics(res.data);
+    } catch (err) {
+      console.error("Error fetching analytics:", err);
+      setAnalytics(null);
+      alert("Failed to fetch analytics. Make sure the short URL is correct.");
+    }
+  };
 
 
   return (

@@ -4,22 +4,24 @@ import urlRoute from './routes/url.js';
 import connectToMongoDB from './connect.js'
 import URL from './models/url.js';
 const app=express();
-const PORT=3000; 
 import cors from 'cors';
+import dotenv from 'dotenv';
+dotenv.config();
+const PORT=process.env.PORT || 3000; 
 
-
-
-
-const MONGO_URL="mongodb+srv://admin:h1Gb0zWHrKUhsrjA@url-shortener-cluster.ixvmr1y.mongodb.net/short-url?retryWrites=true&w=majority&appName=url-shortener-cluster";
-
-
+const MONGO_URL=process.env.MONGO_URL;
 connectToMongoDB(MONGO_URL)
 .then(()=>console.log("Connected to MongoDB"))
 .catch((err)=>console.log(err));
 
 
 
-app.use(cors());
+app.use(cors(
+    {
+  origin: process.env.CLIENT_URL,
+  credentials: true,
+}
+));
 app.use(express.json());
 
 app.use('/url',urlRoute);
@@ -45,6 +47,9 @@ app.get('/:shortId', async (req, res) => {
 
 
 
-app.listen(PORT,()=>{
-    console.log(`Server is running on http://localhost:${PORT}`);
-})
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  if (process.env.NODE_ENV !== "production") {
+    console.log(`http://localhost:${PORT}`);
+  }
+});

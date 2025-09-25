@@ -15,10 +15,10 @@ connectToMongoDB(MONGO_URL)
 .catch((err)=>console.log(err));
 
 
-
+const allowedOrigin = process.env.CLIENT_URL.replace(/\/$/, '');
 app.use(cors(
     {
-  origin: process.env.CLIENT_URL,
+  origin: allowedOrigin,
   credentials: true,
 }
 ));

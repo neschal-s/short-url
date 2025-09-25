@@ -49,7 +49,4 @@ app.get('/:shortId', async (req, res) => {
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
-  if (process.env.NODE_ENV !== "production") {
-    console.log(`http://localhost:${PORT}`);
-  }
 });

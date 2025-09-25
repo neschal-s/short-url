@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 
+
 export default function App() {
   const [url, setUrl] = useState("");
   const [shortUrl, setShortUrl] = useState("");
@@ -8,12 +9,16 @@ export default function App() {
   const [analyticsUrl, setAnalyticsUrl] = useState(""); // input for analytics
   const [analytics, setAnalytics] = useState(null);
 
+
+  const API_URL = import.meta.env.VITE_API_URL;
+  const FRONTEND_URL = import.meta.env.VITE_FRONTEND_URL;
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post("http://localhost:3000/url", { url });
+      const res = await axios.post(`${API_URL}/url`, { url });
       const id = res.data.shortId; // get shortId from response
-      setShortUrl(`http://localhost:3000/${id}`);
+      setShortUrl(`${FRONTEND_URL}/${id}`);
       setUrl("");
       setCopied(false); // reset copied state for new URL
     } catch (err) {
@@ -36,7 +41,7 @@ export default function App() {
     const id = analyticsUrl.split("/").pop();
     if (!id) return alert("Invalid short URL");
     
-    const res = await axios.get(`http://localhost:3000/url/analytics/${id}`);
+    const res = await axios.get(`${API_URL}/url/analytics/${id}`);
     setAnalytics(res.data);
   } catch (err) {
     console.error("Error fetching analytics:", err);
@@ -50,7 +55,6 @@ export default function App() {
     <div className="min-h-screen bg-gradient-to-b from-red-50 to-red-200 flex flex-col items-center justify-center p-6 text-center">
       {/* Heading */}
       <h1 className="text-5xl font-light">Tiny links, <span className="text-blue-600">Mighty</span> power!</h1>
-
       <p className="mt-2 text-lg font-light">
         Shorten your URLs, track clicks, and{" "}
         <span className="text-blue-600">get Analytics.</span>
